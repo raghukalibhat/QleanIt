@@ -21,8 +21,13 @@ def ReadFile(filePath):
     file1.close()
 
 def getAbsFilePath(fileName):
-    return (os.path.dirname(__file__)+str('/')+str(fileName))
+    #return (os.path.dirname(__file__)+str('\\')+str(fileName))
+    return (os.path.abspath(fileName))
 
+##################################################################
+#           printFileMod(path)
+#   This api checks the modified time of a file in ISO format 
+##################################################################
 def printFileMod(path):
     ti_m = os.path.getmtime(path)
  
@@ -31,35 +36,56 @@ def printFileMod(path):
     # Using the timestamp string to create a
     # time object/structure
     t_obj = time.strptime(m_ti)
-     
+
+    print "ti_m",ti_m
+    print "m_ti",m_ti
+    print "Year=",t_obj[0]
+    print "Month=",t_obj[1]
+    print "Day=",t_obj[2]
+    print "Hour=",t_obj[3]
+    print "Minute=",t_obj[4]
+    print "Second=",t_obj[5]  
     # Transforming the time object to a timestamp
     # of ISO 8601 format
     T_stamp = time.strftime("%Y-%m-%d %H:%M:%S", t_obj)
     return T_stamp
 
+##################################################################
+#           printFileExt(path)
+# This api checks the type of file extension
+##################################################################
 def printFileExt(path):
     # this will return a tuple of root and extension
     split_tup = os.path.splitext(path)
-    print(split_tup)    
+    #print(split_tup)    
   
     # extract the file name and extension
     file_name = split_tup[0]
     file_extension = split_tup[1]
   
-    print "File Name: ", file_name 
-    print "File Extension: ", file_extension 
+    print "File Name:", file_name 
+    print "File Extension:", file_extension 
     
 ##################################################################
 #           main()
 ##################################################################
-fileName = 'hello.txt' 
 
-fullPath = getAbsFilePath(fileName)
+rootWorkingDir = os.getcwd()
+print rootWorkingDir
 
-print 'fullPath:',fullPath
+currEl = os.listdir(os.getcwd())
 
-timeStamp = printFileMod(fullPath)
-print 'timeStamp:',timeStamp
+for el in currEl:
+    fullPath = getAbsFilePath(el)
+    print 'fullPath:',fullPath
+    if(os.path.exists(el) and os.path.isfile(el)):
+        print el,"exists and is a valid file"
+        printFileExt(fullPath)
+    if(os.path.exists(el) and os.path.isdir(el)):
+        print el,"exists and is a valid directory"
 
-printFileExt(fullPath)
 
+    timeStamp = printFileMod(fullPath)
+    print 'Last Modified:',timeStamp
+
+    print
