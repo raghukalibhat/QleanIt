@@ -22,7 +22,11 @@ def ReadFile(filePath):
 
 def getAbsFilePath(fileName):
     #return (os.path.dirname(__file__)+str('\\')+str(fileName))
-    return (os.path.abspath(fileName))
+    if(os.path.exists(fileName) and os.path.isfile(fileName)):
+        print "getAbsFilePath : File Path",os.path.abspath(fileName)
+        return (os.path.abspath(fileName))
+    else:
+        return os.getcwd()
 
 ##################################################################
 #           printFileMod(path)
@@ -37,14 +41,6 @@ def printFileMod(path):
     # time object/structure
     t_obj = time.strptime(m_ti)
 
-    print "ti_m",ti_m
-    print "m_ti",m_ti
-    print "Year=",t_obj[0]
-    print "Month=",t_obj[1]
-    print "Day=",t_obj[2]
-    print "Hour=",t_obj[3]
-    print "Minute=",t_obj[4]
-    print "Second=",t_obj[5]  
     # Transforming the time object to a timestamp
     # of ISO 8601 format
     T_stamp = time.strftime("%Y-%m-%d %H:%M:%S", t_obj)
@@ -71,19 +67,29 @@ def printFileExt(path):
 ##################################################################
 
 rootWorkingDir = os.getcwd()
-print rootWorkingDir
 
-currEl = os.listdir(os.getcwd())
+print "Current WD : ",rootWorkingDir
+
+currEl = os.listdir(rootWorkingDir)
+print currEl
 
 for el in currEl:
+    
     fullPath = getAbsFilePath(el)
     print 'fullPath:',fullPath
+    
+    #if its a file dont perform any computation, we will check the time stamp and the modified date to decide
+    #whether to delete ot not 
     if(os.path.exists(el) and os.path.isfile(el)):
         print el,"exists and is a valid file"
         printFileExt(fullPath)
+
+    #for a directory, change to the dir and find the elements inside 
     if(os.path.exists(el) and os.path.isdir(el)):
         print el,"exists and is a valid directory"
-
+        os.chdir(el)
+        print "Elements in the changed directory |", os.chdir(el),"| are : ",os.listdir(rootWorkingDir)
+        os.chdir(rootWorkingDir)
 
     timeStamp = printFileMod(fullPath)
     print 'Last Modified:',timeStamp
